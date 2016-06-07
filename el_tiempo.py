@@ -10,9 +10,11 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 import matplotlib.pyplot as plt
 
-#Iniciar sesion
-#Boot es variable global de la aplicacion
-#postcondicion: creacion de un objeto boot de la API de Twitter
+"""
+Iniciar sesion
+Boot es variable global de la aplicacion
+postcondicion: creacion de un objeto boot de la API de Twitter
+"""
 
 CONSUMER_KEY = '1ltYgYB7IkET9aR6JxklqBG7D'
 CONSUMER_SECRET = 'JyLPQWLggNcRbZZc3zzlAXrPyTeXAeDgXSkfB2IaaYu7T7vVIU'
