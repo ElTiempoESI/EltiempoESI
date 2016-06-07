@@ -60,6 +60,16 @@ def formatingCity(mencion):
 	return mencion.replace(' ', '_')
 
 """
+Funcion: formatingUrl
+Precondicion: recibe una cadena con la ciudad origen
+Postcondicion: sustituye espacion por + y devuelve la cadena
+"""
+
+def formatingUrl(mencion):
+	return mencion.replace(' ', '+')
+
+
+"""
 Funcion: peticionApiWeather
 Precondicion: recibe una cadena con la ciudad a consultar el tiempo
 Postcondicion: devuelve la respuesta de la API
@@ -76,7 +86,7 @@ Precondicion: Recibe la respuesta de la web del tiempo en formato JSON
 Postcondicion: se crean unas cadenas que se almacenan en un diccionario
 """
 
-def createTweet(web, user):
+def createTweet(web, user, destino):
 	for webi in web['weather']:
 		estado = webi['main']
 	temperatura = web['main']['temp'] - 273.15 #La web del tiempo nos devuelve la temperatura en GRADOS KELVIN
@@ -84,6 +94,9 @@ def createTweet(web, user):
 	nombre = web['name']
 	cadena = user+"\nCiudad: "+nombre+"\nEstado: "+estado+"\nTemperatura: "+str(temperatura)+" grados"+"\nViento: "+str(viento)+" Km/h"
 	postingTweet(cadena)
+        if(destino != 'None'):
+                cadena2 = 'https://www.google.es/maps/dir/'+nombre+'/'+destino+'/'
+                postingTweet(cadena2)
 
 """
 Funcion: postingTweet
@@ -106,7 +119,7 @@ def  printGraph(twiteros):
         clave = twiteros.values()
 
         plt.pie(clave, labels = usuarios)  # Dibuja un grafico de quesitos
-        plt.title(u'Numero de menciones de la palabra por parte del usuario')
+        plt.title(u'Porcentaje de menciones por usuario')
         plt.show()
 
 
@@ -128,7 +141,7 @@ def inicioRec(palabra_antigua, usuario_antiguo):
 		print "El antiguo fue: "+usuario_antiguo+" y pidio: "+palabra_antigua
                 print "El usuario: "+user+" hace la siguiente peticion: "+palabra
         else:
-                time.sleep(30)
+                time.sleep(10)
                 inicioRec(palabra,user)
 
 def inicio():
@@ -139,6 +152,7 @@ def inicio():
 	for tweety in tweet_json:
 		palabra = tweety[ 'text' ]
 		user = tweety[ 'user' ]['screen_name']
+                destino = tweety[ 'place' ][ 'name' ]
 	palabra = palabra[14:]
 	user = "@"+user
 
@@ -147,9 +161,11 @@ def inicio():
         else:
                 twiteros[user] = 1
 
-	palabra = formatingCity(palabra)
-	web_json = peticionApiWeather(palabra)
-	createTweet(web_json,user)
+	palabra1 = formatingCity(palabra)
+        palabra2 = formatingUrl(palabra)
+        destino = formatingUrl(destino)
+	web_json = peticionApiWeather(palabra1)
+	createTweet(web_json,user,destino)
 	inicioRec(palabra,user)
 
 
@@ -161,4 +177,3 @@ while True:
         cont += 1
         if(cont%2 == 0):
                 printGraph(twiteros)
-	time.sleep(30) # Delay for 1 minute (60 seconds)
